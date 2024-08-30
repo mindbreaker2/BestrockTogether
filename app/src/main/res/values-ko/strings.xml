@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BestrockTogether</string>
+    <string name="Server_Port">서버 포트</string>
+    <string name="Server_IP">서버 IP</string>
+    <string name="start_proxy">프록시 시작</string>
+    <string name="proxy_started">프록시 시작됨</string>
+    <string name="proxy_not_started">프록시 시작되지 않음</string>
+    <string name="proxy_stopped">프록시 중지됨</string>
+    <string name="Test_connexion">연결 테스트</string>
+    <string name="My_servers">내 서버 :</string>
+    <string name="delete">삭제</string>
+
+</resources>

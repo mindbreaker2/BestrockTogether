@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/ipEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/Server_IP" />
+
+    <EditText
+        android:id="@+id/portEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/Server_Port"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/startButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_proxy" />
+
+    <Button
+        android:id="@+id/testButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Test_connexion" />
+
+    <Button
+        android:id="@+id/testOpenConnection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="send open connection request" />
+
+    <TextView
+        android:id="@+id/statusTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/proxy_not_started"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/MyServ_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/My_servers"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:background="@color/grey"
+        android:textColor="@color/black"
+        />
+    <!-- RecyclerView pour afficher la liste des serveurs -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/serversRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+</LinearLayout>

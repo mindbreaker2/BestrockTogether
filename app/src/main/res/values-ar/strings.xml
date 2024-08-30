@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BestrockTogether</string>
+    <string name="Server_Port">منفذ الخادم</string>
+    <string name="Server_IP">IP الخادم</string>
+    <string name="start_proxy">بدء الوكيل</string>
+    <string name="proxy_started">تم بدء الوكيل</string>
+    <string name="proxy_not_started">لم يتم بدء الوكيل</string>
+    <string name="proxy_stopped">تم إيقاف الوكيل</string>
+    <string name="Test_connexion">اختبار الاتصال</string>
+    <string name="My_servers">خوادمي :</string>
+    <string name="delete">حذف</string>
+
+</resources>
