@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">BestrockTogether</string>
     <string name="Server_Port">서버 포트</string>
-    <string name="Server_IP">서버 IP</string>
+    <string name="Server_IP">서버 IPV4</string>
     <string name="start_proxy">프록시 시작</string>
     <string name="proxy_started">프록시 시작됨</string>
     <string name="proxy_not_started">프록시 시작되지 않음</string>

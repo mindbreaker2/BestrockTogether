@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">BestrockTogether</string>
     <string name="Server_Port">Porta do servidor</string>
-    <string name="Server_IP">IP do servidor</string>
+    <string name="Server_IP">IPV4 do servidor</string>
     <string name="start_proxy">Iniciar proxy</string>
     <string name="proxy_started">Proxy iniciado</string>
     <string name="proxy_not_started">Proxy não iniciado</string>

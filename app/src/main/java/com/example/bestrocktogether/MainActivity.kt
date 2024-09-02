@@ -20,6 +20,7 @@ import java.net.*
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import kotlin.experimental.and
+import kotlin.experimental.inv
 
 data class Server(val ip: String, val port: Int)
 
@@ -114,10 +115,11 @@ class MainActivity : AppCompatActivity() {
         serversRecyclerView = findViewById(R.id.serversRecyclerView)
 
         testOpenConnection.setOnClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
+            /*CoroutineScope(Dispatchers.Main).launch {
                 val result = sendOpenConnectionRequest1()
                 statusTextView.text = result
-            }
+            }*/
+            //handleOpenConnectionRequest2()
         }
 
         testButton.setOnClickListener {
@@ -192,7 +194,10 @@ class MainActivity : AppCompatActivity() {
                             if (isPingPacket(packetFromClient.data)) {
                                 Log.d("Proxy", "Paquet Ping détecté")
                             } else if (isPongPacket(packetFromClient.data)) {
-
+                            }
+                            if (isOpenConnectionRequest2(packetFromClient.data)){
+                                Log.d("Proxy", "Paquet Open Connection Request 2 détecté")
+                                handleOpenConnectionRequest2(packetFromClient.data,serverIp,serverPort)
                             }
 
                             val serverAddress = InetAddress.getByName(serverIp)
@@ -221,7 +226,10 @@ class MainActivity : AppCompatActivity() {
                             } else if (isPongPacket(packetFromServer.data)) {
                                 Log.d("Pong", "paquet pong reçu du serveur")
                                 handlePongPacket(packetFromServer)
-
+                            }
+                            if (isOpenConnectionRequest2(packetFromServer.data)){
+                                Log.d("Proxy", "Paquet Open Connection Request 2 détecté")
+                                handleOpenConnectionRequest2(packetFromServer.data,serverIp,serverPort)
                             }
 
                             if (lastClientAddress != null && lastClientPort != 0) {
@@ -539,9 +547,49 @@ class MainActivity : AppCompatActivity() {
         dynamicPortSocketMap.values.forEach { it.close() }
     }
 
+    private fun isOpenConnectionRequest2(data: ByteArray): Boolean {
+        return data.isNotEmpty() && data[0] == 0x07.toByte() && data.size >= 24
+    }
+
+    private fun handleOpenConnectionRequest2(data: ByteArray, newIp: String, newPort: Int): ByteArray {
+        // Offset basé sur l'analyse précédente (IP commence à l'octet 66)
+        val ipOffset = 65 // L'IP commence à l'octet 66 (index 65)
+        val portOffset = ipOffset + 4 // Le port suit directement l'IP
+
+        // Extraction de l'IP (4 octets) et du Port (2 octets)
+        val ipBytes = data.copyOfRange(ipOffset, ipOffset + 4)
+        val portBytes = data.copyOfRange(portOffset, portOffset + 2)
+
+        // Inverser les bits pour obtenir l'IP réelle
+        val realIpBytes = ipBytes.map { byte -> byte.inv() }.toByteArray()
+        val originalIp = InetAddress.getByAddress(realIpBytes).hostAddress
+
+        // Conversion du port de l'hexadécimal au décimal
+        val originalPort = ByteBuffer.wrap(portBytes).short.toInt() and 0xFFFF
+
+        Log.d("Proxy", "IP et port originaux détectés: $originalIp:$originalPort")
+
+        // Conversion de la nouvelle IP en bytes et application du bitwise NOT
+        val newIpBytes = InetAddress.getByName(newIp).address.map { byte -> byte.inv() }.toByteArray()
+
+        // Conversion du nouveau port en bytes (sans bitwise NOT)
+        val newPortBytes = ByteBuffer.allocate(2).putShort(newPort.toShort()).array()
+
+        // Remplacement de l'IP et du port dans le paquet
+        System.arraycopy(newIpBytes, 0, data, ipOffset, newIpBytes.size)
+        System.arraycopy(newPortBytes, 0, data, portOffset, newPortBytes.size)
+
+        // Log pour vérifier le paquet modifié
+        val modifiedPacket = data.joinToString(" ") { byte -> String.format("%02x", byte) }
+        Log.d("Proxy", "Paquet modifié: $modifiedPacket")
+
+        // Retourne le paquet modifié
+        return data
+    }
+
+
+
     private fun isPingPacket(data: ByteArray): Boolean {
-        // Un paquet Ping a généralement un identifiant spécifique (par exemple, 0x01)
-        // et une structure particulière, mais la taille peut varier.
         return data.isNotEmpty() && data[0] == 0x01.toByte() && data.size >= 24
     }
 
