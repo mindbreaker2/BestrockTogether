@@ -10,5 +10,6 @@
     <string name="Test_connexion">Тест соединения</string>
     <string name="My_servers">Мои серверы :</string>
     <string name="delete">УДАЛИТЬ</string>
+    <string name="players">Игроков</string>
 
 </resources>

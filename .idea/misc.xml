@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/tfletcher/AndroidStudioProjects/BestrockTogether/app/src/main/res/drawable-anydpi/close.xml" value="0.1265" />
+        <entry key="..\:/Users/tfletcher/AndroidStudioProjects/BestrockTogether/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1265" />
+        <entry key="..\:/Users/tfletcher/AndroidStudioProjects/BestrockTogether/app/src/main/res/drawable/button_background.xml" value="0.1265" />
         <entry key="..\:/Users/tfletcher/AndroidStudioProjects/BestrockTogether/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
-        <entry key="..\:/Users/tfletcher/AndroidStudioProjects/BestrockTogether/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/tfletcher/AndroidStudioProjects/BestrockTogether/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/tfletcher/AndroidStudioProjects/BestrockTogether/app/src/main/res/layout/fragment_guide.xml" value="0.21041666666666667" />
         <entry key="..\:/Users/tfletcher/AndroidStudioProjects/BestrockTogether/app/src/main/res/layout/item_server.xml" value="0.11770833333333333" />
       </map>
     </option>

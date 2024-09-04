@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- État pressé -->
+    <item android:state_pressed="true">
+        <layer-list>
+            <item android:left="4dp" android:top="4dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#606060" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <gradient android:startColor="#4D4D4D" android:endColor="#6F6F6F" android:angle="90"/>
+                    <stroke android:width="2dp" android:color="#000000" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- État normal -->
+    <item>
+        <layer-list>
+            <item android:left="2dp" android:top="2dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#404040" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <gradient android:startColor="#BFBFBF" android:endColor="#FFFFFF" android:angle="90"/>
+                    <stroke android:width="2dp" android:color="#000000" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

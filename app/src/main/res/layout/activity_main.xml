@@ -1,20 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fontFamily="@font/mc_regular"
     android:padding="16dp">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/grass"
+        android:fontFamily="@font/mc_title"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/mc_title"
+            android:text="@string/app_name"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:id="@+id/toolbar_title" />
+
+        <ImageButton
+            android:id="@+id/help_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:padding="30dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/help" />
+
+    </androidx.appcompat.widget.Toolbar>
 
     <EditText
         android:id="@+id/ipEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/mc_regular"
         android:hint="@string/Server_IP" />
 
     <EditText
         android:id="@+id/portEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/mc_regular"
         android:hint="@string/Server_Port"
         android:inputType="number" />
 
@@ -22,17 +54,30 @@
         android:id="@+id/startButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/mc_regular"
+        android:background="@drawable/button_selector"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
         android:text="@string/start_proxy" />
 
     <Button
         android:id="@+id/testButton"
         android:layout_width="match_parent"
+        android:fontFamily="@font/mc_regular"
+        android:background="@drawable/button_selector"
+        android:padding="10dp"
         android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
         android:text="@string/Test_connexion" />
 
     <Button
         android:id="@+id/testOpenConnection"
         android:layout_width="match_parent"
+        android:fontFamily="@font/mc_regular"
+        android:background="@drawable/button_selector"
+        android:textSize="16sp"
         android:layout_height="wrap_content"
         android:text="send open connection request" />
 
@@ -40,22 +85,27 @@
         android:id="@+id/statusTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/mc_regular"
+        android:padding="10dp"
         android:text="@string/proxy_not_started"
         android:textSize="16sp" />
+
 
     <TextView
         android:id="@+id/MyServ_textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/mc_regular"
+        android:background="@drawable/button_background"
         android:text="@string/My_servers"
+        android:padding="10dp"
         android:textSize="24sp"
         android:gravity="center"
-        android:background="@color/grey"
-        android:textColor="@color/black"
         />
     <!-- RecyclerView pour afficher la liste des serveurs -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/serversRecyclerView"
+        android:fontFamily="@font/mc_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />

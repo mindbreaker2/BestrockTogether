@@ -10,5 +10,6 @@
     <string name="Test_connexion">测试连接</string>
     <string name="My_servers">我的服务器 :</string>
     <string name="delete">删除</string>
+    <string name="players">球员</string>
 
 </resources>

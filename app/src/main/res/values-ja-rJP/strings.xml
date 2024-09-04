@@ -10,5 +10,6 @@
     <string name="Test_connexion">接続テスト</string>
     <string name="My_servers">私のサーバー :</string>
     <string name="delete">削除</string>
+    <string name="players">選手</string>
 
 </resources>

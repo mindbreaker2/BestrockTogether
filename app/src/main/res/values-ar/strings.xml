@@ -10,5 +10,6 @@
     <string name="Test_connexion">اختبار الاتصال</string>
     <string name="My_servers">خوادمي :</string>
     <string name="delete">حذف</string>
+    <string name="players">اللاعبون</string>
 
 </resources>

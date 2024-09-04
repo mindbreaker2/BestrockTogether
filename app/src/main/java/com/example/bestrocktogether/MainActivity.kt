@@ -1,15 +1,16 @@
 package com.example.bestrocktogether
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -23,7 +24,6 @@ import kotlin.experimental.and
 import kotlin.experimental.inv
 
 data class Server(val ip: String, val port: Int)
-
 class ServersAdapter(
     private val servers: MutableList<Server>,
     private val onServerClick: (Server) -> Unit,
@@ -50,18 +50,19 @@ class ServersAdapter(
         }
 
         holder.deleteButton.setOnClickListener {
-            onDeleteClick(server)
-            servers.removeAt(position)
-            notifyItemRemoved(position)
-
-            if (servers.isEmpty()) {
-                notifyDataSetChanged()
+            val currentPosition = holder.adapterPosition
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                onDeleteClick(server)
+                servers.removeAt(currentPosition)
+                notifyItemRemoved(currentPosition)
+                notifyItemRangeChanged(currentPosition, servers.size)
             }
         }
     }
 
     override fun getItemCount(): Int = servers.size
 }
+
 
 fun loadServers(context: Context): MutableList<Server> {
     val file = File(context.filesDir, "servers.json")
@@ -105,8 +106,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    val toolbar: Toolbar = findViewById(R.id.my_toolbar)
+    setSupportActionBar(toolbar)
+    getSupportActionBar()?.setDisplayShowTitleEnabled(false)
 
-        ipEditText = findViewById(R.id.ipEditText)
+    val helpButton: ImageButton = findViewById(R.id.help_button)
+    helpButton.setOnClickListener {
+        val dialog = GuideDialogFragment()
+        dialog.show(supportFragmentManager, "GuideDialogFragment")
+    }
+
+    ipEditText = findViewById(R.id.ipEditText)
         portEditText = findViewById(R.id.portEditText)
         startButton = findViewById(R.id.startButton)
         testButton = findViewById(R.id.testButton)
@@ -114,37 +124,44 @@ class MainActivity : AppCompatActivity() {
         statusTextView = findViewById(R.id.statusTextView)
         serversRecyclerView = findViewById(R.id.serversRecyclerView)
 
-        testOpenConnection.setOnClickListener {
-            /*CoroutineScope(Dispatchers.Main).launch {
-                val result = sendOpenConnectionRequest1()
-                statusTextView.text = result
-            }*/
-            //handleOpenConnectionRequest2()
-        }
+    val sound: MediaPlayer = MediaPlayer.create(this, R.raw.minecraft_click)
+
+        testOpenConnection.visibility = View.GONE
+
+        /*testOpenConnection.setOnClickListener{
+            sound.start()
+            sendOpenConnectionRequest2()
+            testHandleOpenConnectionRequest2()
+        }*/
 
         testButton.setOnClickListener {
+            sound.start()
             testConnection()
         }
 
         portEditText.setText("19132")
 
-        val serversList = loadServers(this)
-        serversAdapter = ServersAdapter(serversList,
-            onServerClick = { server ->
-                ipEditText.setText(server.ip)
-                portEditText.setText(server.port.toString())
-            },
-            onDeleteClick = { server ->
-                serversList.remove(server)
-                saveServers(this, serversList)
-                serversAdapter.notifyDataSetChanged()
-            }
-        )
+    val serversList = loadServers(this).toMutableList()  // Assurez-vous que c'est une MutableList
+    serversAdapter = ServersAdapter(serversList,
+        onServerClick = { server ->
+            ipEditText.setText(server.ip)
+            portEditText.setText(server.port.toString())
+        },
+        onDeleteClick = { server ->
+            sound.start()
 
-        serversRecyclerView.adapter = serversAdapter
+            // Sauvegarde de la liste mise à jour après la suppression
+            saveServers(this, serversList)
+        }
+    )
+
+
+
+    serversRecyclerView.adapter = serversAdapter
         serversRecyclerView.layoutManager = LinearLayoutManager(this)
 
         startButton.setOnClickListener {
+            sound.start()
             val serverIp = ipEditText.text.toString()
             val serverPort = portEditText.text.toString().toIntOrNull()
 
@@ -155,12 +172,6 @@ class MainActivity : AppCompatActivity() {
                     stopProxy()
                 } else {
                     startProxy(serverIp, serverPort)
-                    //juste un test d'envoi de ping
-                    CoroutineScope(Dispatchers.Main).launch {
-                        //pingServer("localhost",19132)
-                        //FakePong("localhost",19132)
-                    }
-                    //fin du test
 
                     val newServer = Server(serverIp, serverPort)
                     if (!serversList.any { it.ip == serverIp && it.port == serverPort }) {
@@ -170,6 +181,16 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                Log.d("test","boutton cliqué")
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -197,7 +218,9 @@ class MainActivity : AppCompatActivity() {
                             }
                             if (isOpenConnectionRequest2(packetFromClient.data)){
                                 Log.d("Proxy", "Paquet Open Connection Request 2 détecté")
-                                handleOpenConnectionRequest2(packetFromClient.data,serverIp,serverPort)
+                                val modifiedData = handleOpenConnectionRequest2(packetFromClient.data, serverIp, serverPort)
+                                // Mettez à jour les données du paquet avec celles modifiées
+                                packetFromClient.setData(modifiedData)
                             }
 
                             val serverAddress = InetAddress.getByName(serverIp)
@@ -229,7 +252,9 @@ class MainActivity : AppCompatActivity() {
                             }
                             if (isOpenConnectionRequest2(packetFromServer.data)){
                                 Log.d("Proxy", "Paquet Open Connection Request 2 détecté")
-                                handleOpenConnectionRequest2(packetFromServer.data,serverIp,serverPort)
+                                val modifiedData = handleOpenConnectionRequest2(packetFromServer.data, serverIp, serverPort)
+                                // Mettez à jour les données du paquet avec celles modifiées
+                                packetFromServer.setData(modifiedData)
                             }
 
                             if (lastClientAddress != null && lastClientPort != 0) {
@@ -369,7 +394,7 @@ class MainActivity : AppCompatActivity() {
         return withContext(Dispatchers.IO) {
             try {
                 val socket = DatagramSocket()
-                socket.soTimeout = 5000
+                socket.soTimeout = 10000
 
                 val address = InetAddress.getByName(ip)
 
@@ -417,58 +442,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-
-    suspend fun FakePong(ip: String, port: Int): String {
-        return withContext(Dispatchers.IO) {
-            try {
-                val socket = DatagramSocket()
-                socket.soTimeout = 5000
-
-                val address = InetAddress.getByName(ip)
-
-                // Construire le paquet de ping pour Bedrock
-                // Définir la taille du message
-                val magicId = byteArrayOf(
-                    0x00, 0xff.toByte(), 0xff.toByte(), 0x00, 0xfe.toByte(), 0xfe.toByte(), 0xfe.toByte(), 0xfe.toByte(),
-                    0xfd.toByte(), 0xfd.toByte(), 0xfd.toByte(), 0xfd.toByte(), 0x12, 0x34, 0x56, 0x78
-                )
-
-                val timestamp = System.currentTimeMillis()
-                val timestampBytes = ByteArray(8)
-                for (i in 0 until 8) {
-                    timestampBytes[i] = (timestamp shr (56 - i * 8)).toByte()
-                }
-
-                // La taille totale du message : timestamp + magicId
-                val message = ByteArray(1 + 8 + magicId.size)
-                message[0] = 0x1c // Type du paquet "unconnected pong"
-
-                System.arraycopy(timestampBytes, 0, message, 1, timestampBytes.size)
-                System.arraycopy(magicId, 0, message, 1 + timestampBytes.size, magicId.size)
-
-                // Créer et envoyer le paquet
-                val packet = DatagramPacket(message, message.size, address, port)
-                socket.send(packet)
-
-                // Recevoir la réponse du serveur
-                val buffer = ByteArray(1024)
-                val responsePacket = DatagramPacket(buffer, buffer.size)
-                socket.receive(responsePacket)
-
-                // Traiter la réponse
-                val response = responsePacket.data.copyOfRange(0, responsePacket.length)
-                val responseString = String(response)
-
-                socket.close()
-
-                responseString
-            } catch (e: Exception) {
-                "Erreur: ${e::class.simpleName} - ${e.message}"
-            }
-        }
-    }
-
     private fun testConnection() {
         val ip = ipEditText.text.toString()
         val port = portEditText.text.toString().toIntOrNull() ?: return
@@ -481,12 +454,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun parseBedrockPingResponse(response: String): String {
+        val text_joueur = getString(R.string.players)
+        Log.d("Pong","réponse du serveur : $response")
         val data = response.split(";")
         return if (data.size >= 6) {
             """
         MOTD: ${data[1]}
         Version: ${data[3]}
-        Joueurs: ${data[4]} / ${data[5]}
+        ${text_joueur}: ${data[4]} / ${data[5]}
         """.trimIndent()
         } else {
             "Réponse invalide du serveur"
@@ -552,8 +527,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleOpenConnectionRequest2(data: ByteArray, newIp: String, newPort: Int): ByteArray {
-        // Offset basé sur l'analyse précédente (IP commence à l'octet 66)
-        val ipOffset = 65 // L'IP commence à l'octet 66 (index 65)
+        // Offset basé sur l'analyse précédente (IP commence à l'octet 24)
+        val ipOffset = 23 // L'IP commence à l'octet 24 (index 23)
         val portOffset = ipOffset + 4 // Le port suit directement l'IP
 
         // Extraction de l'IP (4 octets) et du Port (2 octets)
@@ -566,7 +541,7 @@ class MainActivity : AppCompatActivity() {
 
         // Conversion du port de l'hexadécimal au décimal
         val originalPort = ByteBuffer.wrap(portBytes).short.toInt() and 0xFFFF
-
+        Log.d("Proxy", "Packet OpenConnectionRequest2: ${data.joinToString(" ") { byte -> String.format("%02x", byte) }}")
         Log.d("Proxy", "IP et port originaux détectés: $originalIp:$originalPort")
 
         // Conversion de la nouvelle IP en bytes et application du bitwise NOT
@@ -588,7 +563,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun isPingPacket(data: ByteArray): Boolean {
         return data.isNotEmpty() && data[0] == 0x01.toByte() && data.size >= 24
     }
@@ -596,5 +570,66 @@ class MainActivity : AppCompatActivity() {
 
     private fun isPongPacket(data: ByteArray): Boolean {
         return return data.isNotEmpty() && data.size >= 1 && data[0] == 0x1C.toByte() // Vérifiez l'identifiant du paquet Pong
+    }
+
+
+    //fonctions de test
+    fun createOpenConnectionRequest2Packet(
+        ip: String = "127.0.0.1",
+        port: Int = 19132,
+        mtu: Int = 1492,
+        clientGuid: Long = 123456789L
+    ): ByteArray {
+        val packetId: Byte = 0x07
+        val magic = byteArrayOf(
+            0x00.toByte(), 0xff.toByte(), 0xff.toByte(), 0x00.toByte(),
+            0xfe.toByte(), 0xfe.toByte(), 0xfe.toByte(), 0xfe.toByte(),
+            0xfd.toByte(), 0xfd.toByte(), 0xfd.toByte(), 0xfd.toByte(),
+            0x12.toByte(), 0x34.toByte(), 0x56.toByte(), 0x78.toByte()
+        )
+        val clientSupportsSecurity = 0x00.toByte()
+
+        // Conversion de l'IP en binaire
+        val ipParts = ip.split(".").map { it.toInt().toByte() }.toByteArray()
+
+        // Conversion du port en binaire
+        val portBinary = ByteBuffer.allocate(2).putShort(port.toShort()).array()
+
+        // Conversion du MTU en binaire
+        val mtuBinary = ByteBuffer.allocate(2).putShort(mtu.toShort()).array()
+
+        // Conversion du GUID client en binaire
+        val guidBinary = ByteBuffer.allocate(8).putLong(clientGuid).array()
+
+        // Combinaison des différents composants dans un seul paquet
+        val packet = ByteBuffer.allocate(1 + magic.size + 1 + ipParts.size + portBinary.size + mtuBinary.size + guidBinary.size)
+            .put(packetId)
+            .put(magic)
+            .put(clientSupportsSecurity)
+            .put(ipParts)
+            .put(portBinary)
+            .put(mtuBinary)
+            .put(guidBinary)
+            .array()
+
+        return packet
+    }
+
+    fun sendOpenConnectionRequest2(ip: String = "127.0.0.1", port: Int = 1932) {
+        Thread {
+            try {
+                val packet = createOpenConnectionRequest2Packet(ip, port)
+                val packetHex = packet.joinToString(separator = " ") { "%02x".format(it) }
+                println("Contenu du paquet : $packetHex")
+                DatagramSocket().use { socket ->
+                    val address = InetAddress.getByName(ip)
+                    val datagramPacket = DatagramPacket(packet, packet.size, address, port)
+                    socket.send(datagramPacket)
+                    println("Paquet envoyé à $ip:$port")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }.start()
     }
 }

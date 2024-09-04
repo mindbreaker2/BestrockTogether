@@ -9,6 +9,8 @@
         android:id="@+id/serverTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/mc_regular"
+        android:textColor="@color/black"
         android:layout_weight="1"
         android:text="IP:Port"
         android:textSize="16sp" />
@@ -16,6 +18,8 @@
     <Button
         android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
+        android:fontFamily="@font/mc_regular"
+        android:background="@drawable/button_selector"
         android:layout_height="wrap_content"
         android:text="@string/delete" />
 

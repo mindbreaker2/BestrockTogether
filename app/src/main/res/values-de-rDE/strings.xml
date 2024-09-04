@@ -10,5 +10,6 @@
     <string name="Test_connexion">Verbindung testen</string>
     <string name="My_servers">Meine Server :</string>
     <string name="delete">LÖSCHEN</string>
+    <string name="players">Spieler</string>
 
 </resources>

@@ -10,5 +10,6 @@
     <string name="Test_connexion">Test connection</string>
     <string name="My_servers">My servers :</string>
     <string name="delete">DELETE</string>
+    <string name="players">players</string>
 
 </resources>
